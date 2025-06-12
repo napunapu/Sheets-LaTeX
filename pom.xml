@@ -57,6 +57,17 @@
       <artifactId>jasypt-spring-boot-starter</artifactId>
       <version>${jasypt.version}</version>
     </dependency>
+    
+<dependency>
+    <groupId>com.google.apis</groupId>
+    <artifactId>google-api-services-sheets</artifactId>
+    <version>v4-rev612-1.25.0</version>
+</dependency>
+  <dependency>
+    <groupId>com.google.oauth-client</groupId>
+    <artifactId>google-oauth-client-jetty</artifactId>
+    <version>1.39.0</version>
+  </dependency>
   </dependencies>
   <build>
     <plugins>
@@ -76,7 +87,7 @@
           </execution>
         </executions>
         <configuration>
-          <mainClass>fi.panukorpela.sheetslatex.ReaderApplication</mainClass>
+          <mainClass>fi.panukorpela.sheetslatex.SheetsLaTeXApplication</mainClass>
         </configuration>
       </plugin>
       <plugin>
