@@ -7,8 +7,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -67,7 +69,23 @@ public class LatexVariableReplacerService {
         }
         matcher.appendTail(sb);
 
-        Files.write(Paths.get(latexOutputFilename), sb.toString().getBytes());
+        String outputContent = sb.toString();
+        Files.write(Paths.get(latexOutputFilename), outputContent.getBytes());
         log.info("Wrote {} replacements to '{}'", replacements, latexOutputFilename);
+
+
+        // After replacement, check for any unprocessed \VAR{...} placeholders
+        Pattern remainingPattern = Pattern.compile("\\\\VAR\\{([^}]+)\\}");
+        Matcher remainingMatcher = remainingPattern.matcher(outputContent);
+        Set<String> unprocessed = new HashSet<>();
+        while (remainingMatcher.find()) {
+            unprocessed.add(remainingMatcher.group(1));
+        }
+        for (String var : unprocessed) {
+            log.error("Unprocessed placeholder still in output: \\VAR{{{}}}", var);
+        }
+        if (unprocessed.isEmpty()) {
+            log.info("All placeholders processed.");
+        }
     }
 }

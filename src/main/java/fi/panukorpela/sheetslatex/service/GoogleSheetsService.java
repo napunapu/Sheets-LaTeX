@@ -91,6 +91,10 @@ public class GoogleSheetsService {
                     value = value.replace(',', '.');
                 }
                 String variable = row.get(1).toString().trim();
+                // If variable name ends with _percent or _percentage, append \%
+                if (variable.endsWith("_percent") || variable.endsWith("_percentage")) {
+                    value = value + "\\%";
+                }
                 variables.put(variable, value);
             }
         }
