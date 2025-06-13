@@ -91,6 +91,10 @@ public class GoogleSheetsService {
                     value = value.replace(',', '.');
                 }
                 String variable = row.get(1).toString().trim();
+                // Check for duplicate key
+                if (variables.containsKey(variable)) {
+                    throw new IllegalArgumentException("Duplicate variable name found in Google Sheet: '" + variable + "'");
+                }
                 // If variable name ends with _percent or _percentage, append \%
                 if (variable.endsWith("_percent") || variable.endsWith("_percentage")) {
                     value = value + "\\%";

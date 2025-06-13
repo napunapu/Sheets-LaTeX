@@ -82,7 +82,7 @@ public class LatexVariableReplacerService {
             unprocessed.add(remainingMatcher.group(1));
         }
         for (String var : unprocessed) {
-            log.error("Unprocessed placeholder still in output: \\VAR{{{}}}", var);
+            log.error("Unprocessed placeholder still in output: \\VAR{{}}}", var);
         }
         if (unprocessed.isEmpty()) {
             log.info("All placeholders processed.");
