@@ -1,5 +1,6 @@
 credentials.json
 config.properties
+testconfig.properties
 
 # Compiled class file
 *.class
