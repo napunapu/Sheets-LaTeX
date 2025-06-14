@@ -4,7 +4,11 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class LatexCompiler {
+    private static Logger log = LoggerFactory.getLogger(LatexCompiler.class);
 
     /**
      * Compiles the given LaTeX file with pdflatex.
@@ -25,42 +29,26 @@ public class LatexCompiler {
                 );
             }
             pb.redirectErrorStream(true);
-
             Process process = pb.start();
-
             // Print pdflatex output to console (optional but useful)
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    System.out.println(line);
+                    log.info(line);
                 }
             }
-
             int exitCode = process.waitFor();
             if (exitCode == 0) {
-                System.out.println("PDF generated successfully!");
+                log.info("PDF generated successfully!");
                 return true;
             } else {
-                System.err.println("pdflatex failed with exit code " + exitCode);
+                log.error("pdflatex failed with exit code " + exitCode);
                 return false;
             }
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
             return false;
         }
-    }
-
-    // Example usage
-    public static void main(String[] args) {
-        String outputDir = "downloads";
-        //runPdflatex("downloads/Articles per year.tex", outputDir);
-        //runPdflatex("downloads/Research design.tex", outputDir);
-        //runPdflatex("downloads/Analysis methods.tex", outputDir);
-        //runPdflatex("downloads/Data sources.tex", outputDir);
-        //runPdflatex("downloads/Articles per participant count.tex", outputDir);
-        //runPdflatex("downloads/Dropout definition source.tex", outputDir);
-        //runPdflatex("downloads/Criteria for passing.tex", outputDir);
-        runPdflatex("downloads/Criteria for dropout.tex", outputDir);
     }
 }
 

@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import fi.panukorpela.sheetslatex.service.pgfconverters.BarChartParams;
+import fi.panukorpela.sheetslatex.service.pgfconverters.MulticolourBarChartWriter;
 
 @Service
 public class PgfPlotsChartWriterService {
@@ -121,7 +122,20 @@ public class PgfPlotsChartWriterService {
                 System.out.println("LaTeX PGFPlots file written: " + outputFile);
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+    
+    public void writeColouredBarChartFromSheets(BarChartParams params) {
+        String tab = params.getTab();
+        String range = params.getRange();
+        boolean errorForDataAfterRange = params.isErrorForDataAfterRange();
+        try {
+            // Read data from the Sheet
+            List<String[]> table = googleSheetsService.getTableFromSheet(tab, range, errorForDataAfterRange);
+            MulticolourBarChartWriter.writeMulticolorBarChartFromSheets(table, params);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
     

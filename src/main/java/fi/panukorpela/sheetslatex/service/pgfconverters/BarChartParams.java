@@ -12,6 +12,7 @@ public class BarChartParams {
     private boolean reverseOrder = false;
     private int xLabelMaxLineLength = 0;
     private double xLimits = 0.0;
+    private boolean showValuesOnBars = false;
 
     // Private constructor
     private BarChartParams() {}
@@ -28,6 +29,7 @@ public class BarChartParams {
     public boolean isReverseOrder() { return reverseOrder; }
     public int getXLabelMaxLineLength() { return xLabelMaxLineLength; }
     public double getXLimits() { return xLimits; }
+    public boolean isShowValuesOnBars() { return showValuesOnBars; }
 
     public static Builder builder() { return new Builder(); }
 
@@ -45,6 +47,7 @@ public class BarChartParams {
         public Builder reverseOrder(boolean reverseOrder) { params.reverseOrder = reverseOrder; return this; }
         public Builder xLabelMaxLineLength(int xLabelMaxLineLength) { params.xLabelMaxLineLength = xLabelMaxLineLength; return this; }
         public Builder xLimits(double xLimits) { params.xLimits = xLimits; return this; }
+        public Builder showValuesOnBars(boolean showValuesOnBars) { params.showValuesOnBars = showValuesOnBars; return this; }
 
         public BarChartParams build() {
             if (params.tab == null || params.range == null) throw new IllegalArgumentException("Tab and range must be set.");
