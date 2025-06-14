@@ -9,6 +9,8 @@ public class BarChartParams {
     private String yLabel = "";
     private int labelRotation = 45;
     private boolean reverseOrder = false;
+    private int xLabelMaxLineLength = 0;
+    private double xLimits = 0.0;
 
     // Private constructor
     private BarChartParams() {}
@@ -22,6 +24,8 @@ public class BarChartParams {
     public String getYLabel() { return yLabel; }
     public int getLabelRotation() { return labelRotation; }
     public boolean isReverseOrder() { return reverseOrder; }
+    public int getXLabelMaxLineLength() { return xLabelMaxLineLength; }
+    public double getXLimits() { return xLimits; }
 
     public static Builder builder() { return new Builder(); }
 
@@ -36,6 +40,8 @@ public class BarChartParams {
         public Builder yLabel(String yLabel) { params.yLabel = yLabel; return this; }
         public Builder labelRotation(int labelRotation) { params.labelRotation = labelRotation; return this; }
         public Builder reverseOrder(boolean reverseOrder) { params.reverseOrder = reverseOrder; return this; }
+        public Builder xLabelMaxLineLength(int xLabelMaxLineLength) { params.xLabelMaxLineLength = xLabelMaxLineLength; return this; }
+        public Builder xLimits(double xLimits) { params.xLimits = xLimits; return this; }
 
         public BarChartParams build() {
             if (params.tab == null || params.range == null) throw new IllegalArgumentException("Tab and range must be set.");

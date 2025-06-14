@@ -23,6 +23,8 @@ public class PgfPlotsChartWriterService {
         String yLabel = params.getYLabel();
         int labelRotation = params.getLabelRotation();
         boolean reverseOrder = params.isReverseOrder();
+        int xLabelMaxLineLength = params.getXLabelMaxLineLength();
+        double xLimits = params.getXLimits();
         try {
             // Read data from the Sheet
             List<String[]> table = googleSheetsService.getTableFromSheet(tab, range);
@@ -50,7 +52,11 @@ public class PgfPlotsChartWriterService {
                 String[] row = table.get(i);
                 // Column D: Article count, Column E: Year
                 counts[i] = Integer.parseInt(row[0]);
-                labels[i] = "{" + row[1].replace("_", "\\_") + "}";
+                String label = row[1].replace("_", "\\_");
+                if (xLabelMaxLineLength > 0) {
+                    label = latexAxisLabelLineBreak(label, xLabelMaxLineLength);
+                }
+                labels[i] = "{" + label + "}";
             }
             BarChartLayout layout = getPgfpBarChartLayout(nBars);
 
@@ -79,12 +85,20 @@ public class PgfPlotsChartWriterService {
                     if (i != labels.length - 1) writer.write(",");
                 }
                 writer.write("},\n");
-                writer.write("    xticklabel style={rotate=" + labelRotation + ",anchor=east},\n");
+                if (xLabelMaxLineLength == 0) {
+                    writer.write("    xticklabel style={rotate=" + labelRotation + ",anchor=east},\n");
+                } else {
+                    writer.write("    xticklabel style={font=\\scriptsize, align=center, text width=3cm},\n");
+                }
                 writer.write("    bar width=" + layout.barWidthPt + "pt,\n");
                 writer.write("    grid=major,\n");
                 writer.write("    xmajorgrids=false,\n");
                 //writer.write("    nodes near coords,\n");
-                writer.write("    enlarge x limits=" + layout.enlargeXLimits + ",\n");
+                if (xLimits == 0.0) {
+                    writer.write("    enlarge x limits=" + layout.enlargeXLimits + ",\n");
+                } else {
+                    writer.write("    enlarge x limits=" + xLimits + ",\n");
+                }
                 writer.write("    reverse legend,\n");
                 writer.write("]\n");
 
@@ -136,6 +150,29 @@ public class PgfPlotsChartWriterService {
         enlarge = Math.round(enlarge * 1000.0) / 1000.0;
 
         return new BarChartLayout(barWidth, enlarge);
+    }
+    
+    public static String latexAxisLabelLineBreak(String label, int maxLineLength) {
+        // Escape LaTeX special characters
+        label = label.replace("_", "\\_");
+        String[] words = label.split(" ");
+        StringBuilder result = new StringBuilder();
+        int lineLen = 0;
+        for (int i = 0; i < words.length; i++) {
+            String word = words[i];
+            // +1 for the space that will be added (except first word)
+            int nextLen = lineLen + (lineLen == 0 ? 0 : 1) + word.length();
+            if (lineLen != 0 && nextLen > maxLineLength) {
+                result.append("\\\\");
+                lineLen = 0;
+            } else if (lineLen != 0) {
+                result.append(" ");
+                lineLen++; // for the space
+            }
+            result.append(word);
+            lineLen += word.length();
+        }
+        return result.toString();
     }
 
 }
