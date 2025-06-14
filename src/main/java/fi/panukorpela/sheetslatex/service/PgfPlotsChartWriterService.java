@@ -14,8 +14,15 @@ public class PgfPlotsChartWriterService {
     @Autowired
     private GoogleSheetsService googleSheetsService;
 
-    public void writeBarChartFromSheets(String tab, String range, boolean swapColumns, 
-            String outputFile, String xLabel, String yLabel, int labelRotation, boolean reverseOrder) {
+    public void writeBarChartFromSheets(BarChartParams params) {
+        String tab = params.getTab();
+        String range = params.getRange();
+        boolean swapColumns = params.isSwapColumns();
+        String outputFile = params.getOutputFile();
+        String xLabel = params.getXLabel();
+        String yLabel = params.getYLabel();
+        int labelRotation = params.getLabelRotation();
+        boolean reverseOrder = params.isReverseOrder();
         try {
             // Read data from the Sheet
             List<String[]> table = googleSheetsService.getTableFromSheet(tab, range);
