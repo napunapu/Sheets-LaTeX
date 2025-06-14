@@ -17,7 +17,7 @@ class GoogleSheetsServiceIT {
     @Autowired
     private GoogleSheetsService googleSheetsService;
 
-    //@Test
+    @Test
     void testReadLatexVariablesWithRealSheet() throws Exception {
         // ACT: Call the real service method
         Map<String, String> result = googleSheetsService.readLatexVariables();
@@ -36,7 +36,7 @@ class GoogleSheetsServiceIT {
     
     @Test
     void getTableFromSheet() throws Exception {
-        List<String[]> table = googleSheetsService.getTableFromSheet("Visualisations", "D1:E18");
+        List<String[]> table = googleSheetsService.getTableFromSheet("Visualisations", "D1:E18", true);
         System.out.println("Results from 'Visualisations'!D1:E18:");
         for (String[] row : table) {
             // Print both columns, handling possible missing values
