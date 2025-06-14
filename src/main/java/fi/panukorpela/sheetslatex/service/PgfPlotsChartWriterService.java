@@ -9,6 +9,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import fi.panukorpela.sheetslatex.service.pgfconverters.BarChartParams;
+
 @Service
 public class PgfPlotsChartWriterService {
     @Autowired
@@ -46,13 +48,14 @@ public class PgfPlotsChartWriterService {
             int nBars = table.size();
 
             // Arrays to hold the data
-            int[] counts = new int[nBars];
+            double[] counts = new double[nBars];
             String[] labels = new String[nBars];
 
             for (int i = 0; i < nBars; i++) {
                 String[] row = table.get(i);
                 // Column D: Article count, Column E: Year
-                counts[i] = Integer.parseInt(row[0]);
+                String countString = row[0].replace(",", ".");
+                counts[i] = Double.parseDouble(countString);
                 String label = row[1].replace("_", "\\_");
                 if (xLabelMaxLineLength > 0) {
                     label = latexAxisLabelLineBreak(label, xLabelMaxLineLength);

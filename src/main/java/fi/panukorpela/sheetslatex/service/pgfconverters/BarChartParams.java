@@ -1,4 +1,4 @@
-package fi.panukorpela.sheetslatex.service;
+package fi.panukorpela.sheetslatex.service.pgfconverters;
 
 public class BarChartParams {
     private String tab;
