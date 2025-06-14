@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -104,6 +105,33 @@ public class GoogleSheetsService {
         }
 
         return variables;
+    }
+    
+    /**
+     * Returns a table of values from the given tab and range in the Google Sheet.
+     * @param tabName e.g. "ArticleCounts"
+     * @param rangeString e.g. "A2:B18"
+     * @return List of String arrays (one per row)
+     * @throws IOException if Sheets API fails
+     */
+    public List<String[]> getTableFromSheet(String tabName, String rangeString) throws IOException {
+        String fullRange = tabName + "!" + rangeString;
+        ValueRange response = sheetsService.spreadsheets().values()
+                .get(spreadsheetId, fullRange)
+                .execute();
+
+        List<List<Object>> values = response.getValues();
+        List<String[]> result = new ArrayList<>();
+        if (values != null) {
+            for (List<Object> row : values) {
+                String[] rowArr = new String[row.size()];
+                for (int i = 0; i < row.size(); i++) {
+                    rowArr[i] = row.get(i).toString();
+                }
+                result.add(rowArr);
+            }
+        }
+        return result;
     }
 
     /**
