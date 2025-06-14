@@ -37,13 +37,13 @@ public class PgfPlotsChartWriterService {
 
             // Arrays to hold the data
             int[] counts = new int[nBars];
-            String[] years = new String[nBars];
+            String[] labels = new String[nBars];
 
             for (int i = 0; i < nBars; i++) {
                 String[] row = table.get(i);
                 // Column D: Article count, Column E: Year
                 counts[i] = Integer.parseInt(row[0]);
-                years[i] = row[1].replace("_", "\\_");
+                labels[i] = "{" + row[1].replace("_", "\\_") + "}";
             }
             BarChartLayout layout = getPgfpBarChartLayout(nBars);
 
@@ -67,9 +67,9 @@ public class PgfPlotsChartWriterService {
                 writer.write("    xticklabels={");
 
                 // Add all years to xticklabels
-                for (int i = 0; i < years.length; i++) {
-                    writer.write(years[i]);
-                    if (i != years.length - 1) writer.write(",");
+                for (int i = 0; i < labels.length; i++) {
+                    writer.write(labels[i]);
+                    if (i != labels.length - 1) writer.write(",");
                 }
                 writer.write("},\n");
                 writer.write("    xticklabel style={rotate=" + labelRotation + ",anchor=east},\n");
@@ -87,7 +87,7 @@ public class PgfPlotsChartWriterService {
                 writer.write("coordinates {\n");
                 // Write coordinates (x is index+1, y is count)
                 for (int i = 0; i < counts.length; i++) {
-                    writer.write("    (" + (i + 1) + "," + counts[i] + ")  % " + years[i] + "\n");
+                    writer.write("    (" + (i + 1) + "," + counts[i] + ")  % " + labels[i] + "\n");
                 }
                 writer.write("};\n");
                 writer.write("\\end{axis}\n");
