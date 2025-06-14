@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,9 +78,7 @@ public class GoogleSheetsService {
                 .get(spreadsheetId, range)
                 .execute();
         List<List<Object>> rows = response.getValues();
-
         Map<String, String> variables = new HashMap<>();
-
         if (rows != null) {
             for (List<Object> row : rows) {
                 // Defensive: skip if col C is missing/empty
@@ -115,24 +115,52 @@ public class GoogleSheetsService {
      * @throws IOException if Sheets API fails
      */
     public List<String[]> getTableFromSheet(String tabName, String rangeString) throws IOException {
-        String fullRange = tabName + "!" + rangeString;
+        // Parse start and end rows from rangeString (e.g., "A2:B18")
+        Matcher matcher = Pattern.compile("([A-Z]+)(\\d+):([A-Z]+)(\\d+)").matcher(rangeString);
+        if (!matcher.matches()) {
+            throw new IllegalArgumentException("rangeString must be like A2:B18");
+        }
+
+        String colStart = matcher.group(1);
+        int rowStart = Integer.parseInt(matcher.group(2));
+        String colEnd = matcher.group(3);
+        int rowEnd = Integer.parseInt(matcher.group(4));
+        int rowEndPlusOne = rowEnd + 1;
+        String checkRange = tabName + "!" + colStart + rowStart + ":" + colEnd + rowEndPlusOne;
+
         ValueRange response = sheetsService.spreadsheets().values()
-                .get(spreadsheetId, fullRange)
+                .get(spreadsheetId, checkRange)
                 .execute();
 
         List<List<Object>> values = response.getValues();
         List<String[]> result = new ArrayList<>();
+
+        int expectedRows = rowEnd - rowStart + 1;
+
         if (values != null) {
-            for (List<Object> row : values) {
+            // Add only the expected number of rows
+            int rowsToReturn = Math.min(expectedRows, values.size());
+            for (int i = 0; i < rowsToReturn; i++) {
+                List<Object> row = values.get(i);
                 String[] rowArr = new String[row.size()];
-                for (int i = 0; i < row.size(); i++) {
-                    rowArr[i] = row.get(i).toString();
+                for (int j = 0; j < row.size(); j++) {
+                    rowArr[j] = row.get(j).toString();
                 }
                 result.add(rowArr);
+            }
+            // If there is an extra row, check if it has data
+            if (values.size() > expectedRows) {
+                List<Object> extraRow = values.get(expectedRows);
+                boolean hasData = extraRow.stream().anyMatch(cell -> cell != null && !cell.toString().trim().isEmpty());
+                if (hasData) {
+                    throw new IllegalStateException("Range " + tabName + "!" + rangeString +
+                            " is followed by non-empty data in row " + rowEndPlusOne);
+                }
             }
         }
         return result;
     }
+
 
     /**
      * Fetches a value (or row) from a Google Sheet.
