@@ -114,7 +114,7 @@ public class GoogleSheetsService {
      * @return List of String arrays (one per row)
      * @throws IOException if Sheets API fails
      */
-    public List<String[]> getTableFromSheet(String tabName, String rangeString) throws IOException {
+    public List<String[]> getTableFromSheet(String tabName, String rangeString, boolean errorForDataAfterRange) throws IOException {
         // Parse start and end rows from rangeString (e.g., "A2:B18")
         Matcher matcher = Pattern.compile("([A-Z]+)(\\d+):([A-Z]+)(\\d+)").matcher(rangeString);
         if (!matcher.matches()) {
@@ -152,7 +152,7 @@ public class GoogleSheetsService {
             if (values.size() > expectedRows) {
                 List<Object> extraRow = values.get(expectedRows);
                 boolean hasData = extraRow.stream().anyMatch(cell -> cell != null && !cell.toString().trim().isEmpty());
-                if (hasData) {
+                if (hasData && errorForDataAfterRange) {
                     throw new IllegalStateException("Range " + tabName + "!" + rangeString +
                             " is followed by non-empty data in row " + rowEndPlusOne);
                 }

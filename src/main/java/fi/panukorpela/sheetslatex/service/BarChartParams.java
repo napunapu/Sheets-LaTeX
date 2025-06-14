@@ -3,6 +3,7 @@ package fi.panukorpela.sheetslatex.service;
 public class BarChartParams {
     private String tab;
     private String range;
+    private boolean errorForDataAfterRange = true;
     private boolean swapColumns = false;
     private String outputFile = "chart.tex";
     private String xLabel = "";
@@ -18,6 +19,7 @@ public class BarChartParams {
     // Getters (add as needed)
     public String getTab() { return tab; }
     public String getRange() { return range; }
+    public boolean isErrorForDataAfterRange() { return errorForDataAfterRange; }
     public boolean isSwapColumns() { return swapColumns; }
     public String getOutputFile() { return outputFile; }
     public String getXLabel() { return xLabel; }
@@ -34,6 +36,7 @@ public class BarChartParams {
 
         public Builder tab(String tab) { params.tab = tab; return this; }
         public Builder range(String range) { params.range = range; return this; }
+        public Builder errorForDataAfterRange(boolean errorForDataAfterRange) { params.errorForDataAfterRange = errorForDataAfterRange; return this; }
         public Builder swapColumns(boolean swapColumns) { params.swapColumns = swapColumns; return this; }
         public Builder outputFile(String outputFile) { params.outputFile = outputFile; return this; }
         public Builder xLabel(String xLabel) { params.xLabel = xLabel; return this; }

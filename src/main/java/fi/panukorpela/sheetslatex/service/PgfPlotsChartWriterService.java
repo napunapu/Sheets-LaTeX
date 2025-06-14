@@ -17,6 +17,7 @@ public class PgfPlotsChartWriterService {
     public void writeBarChartFromSheets(BarChartParams params) {
         String tab = params.getTab();
         String range = params.getRange();
+        boolean errorForDataAfterRange = params.isErrorForDataAfterRange();
         boolean swapColumns = params.isSwapColumns();
         String outputFile = params.getOutputFile();
         String xLabel = params.getXLabel();
@@ -27,7 +28,7 @@ public class PgfPlotsChartWriterService {
         double xLimits = params.getXLimits();
         try {
             // Read data from the Sheet
-            List<String[]> table = googleSheetsService.getTableFromSheet(tab, range);
+            List<String[]> table = googleSheetsService.getTableFromSheet(tab, range, errorForDataAfterRange);
             if (swapColumns) {
                 table.forEach(row -> {
                     if (row.length >= 2) {
