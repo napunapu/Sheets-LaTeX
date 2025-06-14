@@ -1,0 +1,10 @@
+charts:
+  - outputFile: "../Dropout-in-tertiary-level-complementary-education-courses/Research question classification.tex"
+    methodName: "writeColouredBarChartFromSheets"
+    tab: "Visualisations"
+    range: "C42:D54"
+    swapColumns: false
+    xLabel: ""
+    yLabel: ""
+    reverseOrder: false
+    xLimits: 0.12
