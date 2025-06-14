@@ -1,5 +1,6 @@
 credentials.json
 config.properties
+config.yaml
 testconfig.yaml
 
 # Compiled class file
