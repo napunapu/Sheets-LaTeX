@@ -87,5 +87,19 @@ public class LatexVariableReplacerService {
         if (unprocessed.isEmpty()) {
             log.info("All placeholders processed.");
         }
+        // Check for spreadsheet errors like #NAME?, #REF!, etc.
+        Pattern sheetErrorPattern = Pattern.compile("#(NAME\\?|REF!|VALUE!|N/A|ERROR!)");
+        Matcher errorMatcher = sheetErrorPattern.matcher(outputContent);
+        Set<String> sheetErrors = new HashSet<>();
+
+        while (errorMatcher.find()) {
+            sheetErrors.add(errorMatcher.group());
+        }
+
+        if (!sheetErrors.isEmpty()) {
+            log.error("Detected spreadsheet error values in the output: {}", sheetErrors);
+            throw new RuntimeException("Output contains spreadsheet errors: " + sheetErrors);
+        }
+
     }
 }

@@ -12,7 +12,6 @@ class LatexVariableReplacerServiceIT {
 
     @Test
     void testReadLatexVariablesWithRealSheet() throws Exception {
-        // ACT: Call the real service method
         latexVariableReplacerService.replaceVarsInLatexFile();
     }
 }
