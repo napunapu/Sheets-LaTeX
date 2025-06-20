@@ -73,7 +73,7 @@ public class GoogleSheetsService {
      * @return Map of variable name (from col C) -> value (from col B)
      */
     public Map<String, String> readLatexVariables() throws Exception {
-        String range = "LaTeX!B2:C"; // Start at B2:C2, continues down
+        String range = "LaTeX!B2:C";   // Start at B2:C2, continues down
         ValueRange response = sheetsService.spreadsheets().values()
                 .get(spreadsheetId, range)
                 .execute();
@@ -83,9 +83,14 @@ public class GoogleSheetsService {
             for (List<Object> row : rows) {
                 // Defensive: skip if col C is missing/empty
                 if (row.size() < 2 || row.get(1) == null || row.get(1).toString().trim().isEmpty()) {
-                    break; // Stop at first empty variable name (col C)
+                    break;   // Stop at first empty variable name (col C)
                 }
                 String value = row.size() > 0 ? row.get(0).toString() : "";
+                // === Check for "Ladataan..." ===
+                if ("Ladataan...".equalsIgnoreCase(value.trim())) {
+                    throw new IllegalStateException("Google Sheet value for variable '" 
+                            + row.get(1).toString().trim() + "' is still loading (\"Ladataan...\"). Open the Sheet in browser.");
+                }
                 // Check: value looks like a decimal number with comma as decimal sep
                 // E.g. "123,45" or "-0,05"
                 if (value.matches("-?\\d{1,3}(,\\d+)?")) {
@@ -103,7 +108,6 @@ public class GoogleSheetsService {
                 variables.put(variable, value);
             }
         }
-
         return variables;
     }
     
